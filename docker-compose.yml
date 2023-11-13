@@ -1,0 +1,4 @@
+services:
+  redis:
+    container_name: cubby_redis
+    image: redis:7-alpine
