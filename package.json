@@ -1,8 +1,9 @@
 {
 	"name": "twitter-scr",
-	"packageManager": "yarn@4.0.0-rc.52",
+	"private": "true",
 	"type": "module",
 	"main": "dist/index.js",
+	"packageManager": "pnpm@8.9.0",
 	"scripts": {
 		"start": "node .",
 		"build": "rimraf dist && tsc",
@@ -13,11 +14,9 @@
 		"bullmq": "^4.13.2"
 	},
 	"devDependencies": {
-		"@types/eslint": "^8",
 		"@types/node": "^20.8.10",
 		"eslint": "^8.53.0",
 		"eslint-config-neon": "^0.1.57",
-		"eslint-formatter-pretty": "^6.0.0",
 		"eslint-plugin-prettier": "^5.0.1",
 		"prettier": "^3.0.3",
 		"rimraf": "^5.0.5",
@@ -25,5 +24,11 @@
 	},
 	"imports": {
 		"#util/*": "./dist/util/*.js"
+	},
+	"volta": {
+		"node": "20.9.0"
+	},
+	"engines": {
+		"node": ">=18"
 	}
 }
