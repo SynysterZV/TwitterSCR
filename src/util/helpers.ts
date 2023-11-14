@@ -53,7 +53,7 @@ export function createContent(
 			case EntryType.TimelineTimelineModule:
 				if (entry.content.items) {
 					for (const item of entry.content.items) {
-						if ('tweet_results' in item) {
+						if ('tweet_results' in item.item.itemContent) {
 							tweets.push(item.item.itemContent as ItemContentR);
 						}
 					}

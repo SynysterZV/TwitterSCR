@@ -11,6 +11,8 @@ new Worker<{ url: string }>('Twitter', async ({ data }) => {
 
 	const tweetDetail = await fetchTweetDetail(id);
 
+	console.log(JSON.stringify(tweetDetail))
+
 	if (!tweetDetail) return null;
 
 	const content = createContent(tweetDetail, id);
