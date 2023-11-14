@@ -13,7 +13,7 @@ new Worker<{ url: string }>('Twitter', async ({ data }) => {
 
 	if (!tweetDetail) return null;
 
-	const content = createContent(tweetDetail, id);
+	const content = await createContent(tweetDetail, id);
 
 	if (!content) return null;
 

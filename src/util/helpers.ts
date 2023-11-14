@@ -1,4 +1,5 @@
 import { randomUUID } from 'node:crypto';
+import { fetchTweetDetail } from '#util/providers/twitter';
 import { EntryType, TweetDisplayType } from '#util/types/API';
 import type { ItemContent, TweetResult, TwitterGQL } from '#util/types/API';
 import { ContentType } from '#util/types/Content';
@@ -29,27 +30,31 @@ export function getRandomAccount() {
 	return credentials.accounts[Math.floor(Math.random() * credentials.accounts.length)];
 }
 
-export function createContent(
-	data: TwitterGQL,
-	mainTweetId: string,
-): [TweetsContent, TweetThreadContent, ...TwitterUserContent[]] | null {
-	const { entries } = data.data.threaded_conversation_with_injections_v2.instructions[0];
+export async function createBucket(data: TwitterGQL, mainTweetId: string): Promise<ItemContentR[]> {
+	const { entries } = data.data.threaded_conversation_with_injections_v2.instructions[0]
 
-	if (!entries) return null;
-
-	const tweets: ItemContentR[] = [];
+	const tweets: ItemContentR[] = []
 
 	for (const entry of entries) {
-		const entryType = entry.content.entryType;
+		const entryType = entry.content.entryType
 
-		switch (entryType) {
+		switch(entryType) {
 			case EntryType.TimelineTimelineItem:
-				if (entry.content.itemContent && 'tweet_results' in entry.content.itemContent) {
-					tweets.push(entry.content.itemContent as ItemContentR);
+				if (entry.content.itemContent) {
+					if('tweet_results' in entry.content.itemContent) {
+						tweets.push(entry.content.itemContent as ItemContentR)
+					}
+
+					if('cursorType' in entry.content.itemContent && entry.content.itemContent.cursorType === "Top") {
+						const topTweets = await fetchTweetDetail(mainTweetId, entry.content.itemContent.value)
+
+						if(!topTweets) continue
+
+						tweets.unshift(...(await createBucket(topTweets, mainTweetId)))
+					}
 				}
 
 				break;
-
 			case EntryType.TimelineTimelineModule:
 				if (entry.content.items) {
 					for (const item of entry.content.items) {
@@ -62,6 +67,16 @@ export function createContent(
 				break;
 		}
 	}
+
+	return tweets
+}
+
+export async function createContent(
+	data: TwitterGQL,
+	mainTweetId: string,
+): Promise<[TweetsContent, TweetThreadContent, ...TwitterUserContent[]] | null> {
+	
+	const tweets = await createBucket(data, mainTweetId)
 
 	const firstTweet = tweets[0].tweet_results.result;
 	const lastTweet = tweets[tweets.length - 1].tweet_results.result;

@@ -15,6 +15,11 @@ export enum TweetDisplayType {
 	Tweet = 'Tweet',
 }
 
+export enum ItemContentType {
+	TimelineTimelineCursor = "TimelineTimelineCursor",
+	TimelineTweet = "TimelineTweet",
+}
+
 /*
     This is the base response from the Twitter GraphQL API
 */
@@ -47,10 +52,13 @@ export type Item = {
 };
 
 export type ItemContent = {
+	cursorType?: "Bottom" | "Top";
+	itemType: ItemContentType;
 	tweetDisplayType: TweetDisplayType;
 	tweet_results?: {
 		result: TweetResult;
 	};
+	value?: string;
 };
 
 /*

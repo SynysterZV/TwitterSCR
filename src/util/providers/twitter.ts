@@ -86,7 +86,7 @@ export async function twitterFetch(url: string, useAuth: boolean = false): Promi
 	return null;
 }
 
-export async function fetchTweetDetail(status: string) {
+export async function fetchTweetDetail(status: string, cursor?: string) {
 	const url = `${TWITTER_ROOT}/i/api/graphql/7xdlmKfKUJQP7D7woCL5CA/TweetDetail?variables=${encodeURIComponent(
 		JSON.stringify({
 			focalTweetId: status,
@@ -98,6 +98,7 @@ export async function fetchTweetDetail(status: string) {
 			withQuickPromoteEligibilityTweetFields: false,
 			withVoice: false,
 			withV2Timeline: true,
+			cursor,
 		}),
 	)}&features=${encodeURIComponent(
 		JSON.stringify({
